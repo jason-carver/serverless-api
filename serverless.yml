@@ -1,7 +1,5 @@
-# NOTE: update this with your service name
 service: notes-app-api
-
-# Create an optimized package for our functions 
+# pakages functions indiv. for optimazation
 package:
   individually: true
 
@@ -9,24 +7,85 @@ plugins:
   - serverless-bundle # Package our functions with Webpack
   - serverless-offline
   - serverless-dotenv-plugin # Load .env as environment variables
-
 provider:
   name: aws
   runtime: nodejs10.x
   stage: prod
-  region: us-east-1
-  # To load environment variables externally
-  # rename env.example to .env and uncomment
-  # the following line. Also, make sure to not
-  # commit your .env.
-  #
-  #environment:
-  #  SAMPLE_ENV_VAR: ${env:SAMPLE_ENV_VAR}
+  region: us-east-2
+ # environment variables made available to our functions
+  # under process.env.
+  environment:
+    tableName: notes
+    stripeSecretKey: ${env:STRIPE_SECRET_KEY}
+  # 'iamRoleStatements' defines the permission policy for the Lambda function in the DynamoDB. 
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:DescribeTable
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: "arn:aws:dynamodb:us-east-2:*:*"
 
 functions:
-  hello:
-    handler: handler.hello
+# POST
+  create:
+    handler: create.main
     events:
       - http:
-          path: hello
+          path: notes
+          method: post
+          cors: true
+          authorizer: aws_iam
+# GET        
+  get:   
+    handler: get.main
+    events:
+      - http:
+          path: notes/{id}
           method: get
+          cors: true
+          authorizer: aws_iam
+# get all by id
+  list:
+    handler: list.main
+    events:
+      - http:
+          path: notes
+          method: get
+          cors: true
+          authorizer: aws_iam   
+# UPDATE
+  update:   
+    handler: update.main
+    events:
+      - http:
+          path: notes/{id}
+          method: put
+          cors: true
+          authorizer: aws_iam
+#DELETE
+  delete:
+    handler: delete.main
+    events:
+      - http:
+          path: notes/{id}
+          method: delete
+          cors: true
+          authorizer: aws_iam
+# Billing with strip API
+  billing:
+    handler: billing.main
+    events:
+      - http:
+          path: billing
+          method: post
+          cors: true
+          authorizer: aws_iam
+# used to prevent a most common CORS/serverless error
+resources:
+  # API Gateway Errors
+  - ${file(resources/api-gateway-errors.yml)}         

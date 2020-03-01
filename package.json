@@ -4,7 +4,7 @@
   "description": "A Node.js starter for the Serverless Framework with async/await and unit test support",
   "main": "handler.js",
   "scripts": {
-    "test": "serverless-bundle test"
+    "test": "serverless-bundle test"   
   },
   "author": "",
   "license": "MIT",
@@ -14,11 +14,15 @@
   },
   "devDependencies": {
     "aws-sdk": "^2.630.0",
+    "jest": "^25.1.0",
     "serverless-bundle": "^1.2.5",
     "serverless-dotenv-plugin": "^2.1.1",
     "serverless-offline": "^5.3.3"
   },
   "dependencies": {
-    "uuid": "^7.0.1"
+    "eslint": "^6.8.0",
+    "stripe": "^8.24.0",
+    "uuid": "^7.0.1",
+    "uuidv1": "^1.6.14"
   }
 }
