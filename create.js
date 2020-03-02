@@ -1,4 +1,4 @@
-import { v1 as uuidv1 } from "uuid";
+import uuidv1  from "uuidv1";
 import * as dynamoDbLib from "./library/dynamodb-library";
 import { success, failure } from "./library/response-library";
 
@@ -8,13 +8,12 @@ export async function main(event, context) {
       TableName: process.env.tableName,
       Item: {
         userId: event.requestContext.identity.cognitoIdentityId,
-        noteId: uuid.v1(),
+        noteId: uuidv1(),
         content: data.content,
         attachment: data.attachment,
         createdAt: Date.now()
       }
     };
-  
     try {
       await dynamoDbLib.call("put", params);
       return success(params.Item);
