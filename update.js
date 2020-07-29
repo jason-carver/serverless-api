@@ -1,5 +1,8 @@
 import * as dynamoDbLib from "./library/dynamodb-library";
-import { success, failure } from "./library/response-library";
+import {
+  success,
+  failure
+} from "./library/response-library";
 
 export async function main(event, context) {
   const data = JSON.parse(event.body);
@@ -18,8 +21,12 @@ export async function main(event, context) {
   };
   try {
     await dynamoDbLib.call("update", params);
-    return success({ status: true });
+    return success({
+      status: true
+    });
   } catch (e) {
-    return failure({ status: false });
+    return failure({
+      status: false
+    });
   }
 }
